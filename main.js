@@ -1,46 +1,39 @@
-// let objUser = {
-//     name:'',
-//     birthDay:'',
-//     address:'',
-//     mobileNum:'',
-//     gender:''
-// }
-
 const fs = require("fs");
 
 function readCVS(file) {
-  // read from the plain users.csv file.
   const data = fs.readFileSync(file, "utf8");
-  return data;
-}
-
-function saveToFile(csvFileData) {
-  //  save the csv
-  csvFileData.forEach(function (row) {
-    csv += row.join(",");
-    csv += "\n";
-  });
-  fs.writeFileSync("./users.csv");
-}
-function readJSONFile() {
-  // read the previous file
-  // and print it in console
-  let file = "./users.csv";
-  let data = readCVS(file);
   let arr = data.split("\r\n");
-  let finalArr = arr.map((item) => {
+  let JSArrData = arr.map((item) => {
     return item.split(", ");
   });
-  let users = finalArr.map((item) => {
+  return JSArrData;
+}
+function ArrToJSON(arr){
+  let [header, ...data] = arr;
+  let users = data.map((item) => {
     return {
-      name: item[0],
-      birthDay: item[1],
-      address: item[2],
-      mobileNum: item[3],
-      gender: item[4],
+      "name":item[0],
+      "BirthDate": item[1],
+      "Address": item[2],
+      "MobileNumber": item[3],
+      "Gender": item[4],
     };
   });
-  users.shift();
-  console.log(users);
+  return JSON.stringify(users)
 }
-readJSONFile();
+function saveToFile(jsonData, jsonFile) {
+  fs.writeFileSync(jsonFile, jsonData);
+}
+function readJSONFile(file) {
+  const data = fs.readFileSync(file, "utf8");
+  console.log(JSON.parse(data))
+}
+function taskNodeJS(){
+  let file ='./users.csv';
+  let data = readCVS(file);
+  let jsonData = ArrToJSON(data);
+  let jsonFile = 'jsonFile.json'
+  saveToFile(jsonData, jsonFile);
+  readJSONFile(`./${jsonFile}`)
+}
+taskNodeJS()
