@@ -1,7 +1,7 @@
 const fs = require("fs");
 
-function readCVS(file) {
-  const data = fs.readFileSync(file, "utf8");
+function readCSV(csvfile) {
+  const data = fs.readFileSync(csvfile, "utf8");
   let arr = data.split("\r\n");
   let JSArrData = arr.map((item) => {
     return item.split(", ");
@@ -11,29 +11,31 @@ function readCVS(file) {
 function ArrToJSON(arr){
   let [header, ...data] = arr;
   let users = data.map((item) => {
+    [UserName,BirthDate,Address, MobileNumber, Gender] = item;
     return {
-      "name":item[0],
-      "BirthDate": item[1],
-      "Address": item[2],
-      "MobileNumber": item[3],
-      "Gender": item[4],
-    };
+      UserName,
+      BirthDate,
+      Address,
+      MobileNumber, 
+      Gender
+    }
   });
-  return JSON.stringify(users)
+  return users;
 }
-function saveToFile(jsonData, jsonFile) {
+function saveToFile(arrData, jsonFile) {
+  let jsonData = JSON.stringify(arrData);
   fs.writeFileSync(jsonFile, jsonData);
 }
-function readJSONFile(file) {
-  const data = fs.readFileSync(file, "utf8");
+function readJSONFile(jsonfile) {
+  const data = fs.readFileSync(jsonfile, "utf8");
   console.log(JSON.parse(data))
 }
-function taskNodeJS(){
-  let file ='./users.csv';
-  let data = readCVS(file);
-  let jsonData = ArrToJSON(data);
-  let jsonFile = 'jsonFile.json'
-  saveToFile(jsonData, jsonFile);
-  readJSONFile(`./${jsonFile}`)
+function taskNodeJS(csvfile, jsonfile){
+  let data = readCSV(csvfile);
+  let arrData = ArrToJSON(data);
+  saveToFile(arrData, jsonFile);
+  readJSONFile(jsonfile)
 }
-taskNodeJS()
+let csvfile ='./users.csv';
+let jsonFile = './jsonFile.json';
+taskNodeJS(csvfile, jsonFile)
